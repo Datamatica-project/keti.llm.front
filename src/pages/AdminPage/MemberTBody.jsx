@@ -3,17 +3,19 @@ import StatusLabel from "../../components/StatusLabel";
 import styles from "./MemberTable.module.css";
 import { approveMember, rejectMember, suspendMember } from "../../api/adminApi";
 
-export default function MemberTBody({ member, index }) {
+export default function MemberTBody({ member, index, onDataChange }) {
   const handleApprove = async () => {
     console.log("승인");
     const response = await approveMember(member.userId);
     console.log(response);
+    onDataChange();
   };
 
   const handleSuspend = async () => {
     console.log("탈퇴");
     const response = await suspendMember(member.userId);
     console.log(response);
+    onDataChange();
   };
   return (
     <div className={styles.tableRow}>
@@ -29,7 +31,9 @@ export default function MemberTBody({ member, index }) {
           <button
             className={styles.approveButton + " " + styles.button}
             disabled={
-              member.status === "APPROVED" || member.status === "WAITING"
+              member.status === "APPROVED" ||
+              member.status === "WAITING" ||
+              member.status === "WITHDRAWN"
             }
             onClick={handleApprove}
           >

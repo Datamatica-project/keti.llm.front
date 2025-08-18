@@ -1,7 +1,20 @@
 import React from "react";
 import StatusLabel from "../../components/StatusLabel";
 import styles from "./MemberTable.module.css";
-export default function CompanyTBody({ company, index }) {
+import { approveCompany, rejectCompany } from "../../api/adminApi";
+
+export default function CompanyTBody({ company, index, onDataChange }) {
+  const handleApprove = async () => {
+    const response = await approveCompany(company.id);
+    console.log(response);
+    onDataChange();
+  };
+
+  const handleSuspend = async () => {
+    const response = await rejectCompany(company.id);
+    console.log(response);
+    onDataChange();
+  };
   return (
     <div className={styles.tableRow}>
       <div className={styles.tableCell}>{index + 1}</div>
@@ -19,6 +32,7 @@ export default function CompanyTBody({ company, index }) {
             disabled={
               company.status === "APPROVED" || company.status === "PENDING"
             }
+            onClick={handleApprove}
           >
             승인
           </button>
@@ -29,6 +43,7 @@ export default function CompanyTBody({ company, index }) {
               company.status === "PENDING" ||
               company.status === "WITHDRAWAL"
             }
+            onClick={handleSuspend}
           >
             거부
           </button>

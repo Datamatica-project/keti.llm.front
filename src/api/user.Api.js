@@ -47,13 +47,13 @@ export const loginUser = async (userData) => {
       password: password,
     });
     const user = response.data;
-    console.log(user);
+
     localStorage.setItem("user", JSON.stringify(user.user));
     localStorage.setItem("userEmail", user.user.username);
 
     return response.data;
   } catch (error) {
-    console.error("로그인 에러:", error);
+    console.warn("로그인 실패:", error);
     throw error;
   }
 };
@@ -61,12 +61,12 @@ export const loginUser = async (userData) => {
 // 비밀번호 재설정
 export const resetPassword = async (password, token) => {
   try {
-    // const response = await api.post("/api/user/reset-password", {
-    //   password,
-    //   token,
-    // });
-    // return response.data;
-    return { status: 200 };
+    const response = await api.post("/api/v1/user/reset-password", {
+      token,
+      newPassword: password,
+      confirmPassword: password,
+    });
+    return response.data;
   } catch (error) {
     console.error("비밀번호 재설정 에러:", error);
     throw error;
@@ -89,6 +89,38 @@ export const requestCompany = async (
     return response.data;
   } catch (error) {
     console.error("기관/기업명 추가 요청 에러:", error);
+    throw error;
+  }
+};
+
+export const getUserInfo = async () => {
+  try {
+    const response = await api.get("/api/v1/user/profile");
+    return response.data;
+  } catch (error) {
+    console.error("회원 정보 불러오기 에러:", error);
+    throw error;
+  }
+};
+
+export const updateUserInfo = async (userData) => {
+  try {
+    const response = await api.put("/api/v1/user/profile", userData);
+    return response.data;
+  } catch (error) {
+    console.error("회원 정보 수정 에러:", error);
+    throw error;
+  }
+};
+
+export const findPassword = async (email) => {
+  try {
+    const response = await api.post("/api/v1/user/forgot-password", {
+      username: email,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("비밀번호 찾기 에러:", error);
     throw error;
   }
 };

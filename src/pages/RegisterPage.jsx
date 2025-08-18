@@ -56,19 +56,18 @@ function RegisterPage() {
       console.error("회원가입 에러:", error);
     }
 
-    console.log(response);
-    // if (response.id) {
-    //   setIsCustomAlertOpen(true);
-    //   setAlertTitle("회원가입 성공");
-    //   setAlertMessage("회원가입이 완료되었습니다.");
-    //   setAlertType("success");
-    //   navigate("/");
-    // } else {
-    //   setIsCustomAlertOpen(true);
-    //   setAlertTitle("회원가입 실패");
-    //   setAlertMessage("회원가입에 실패했습니다.");
-    //   setAlertType("error");
-    // }
+    if (response.success) {
+      setIsCustomAlertOpen(true);
+      setAlertTitle("회원가입 성공");
+      setAlertMessage("관리자 승인을 기다려주세요");
+      setAlertType("success");
+      navigate("/");
+    } else {
+      setIsCustomAlertOpen(true);
+      setAlertTitle("회원가입 실패");
+      setAlertMessage("회원가입에 실패했습니다.");
+      setAlertType("error");
+    }
   };
 
   return (

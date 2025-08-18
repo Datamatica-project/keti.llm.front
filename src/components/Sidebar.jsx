@@ -207,7 +207,7 @@ function Sidebar() {
                     chat.id === "new" ? (
                       <li key={index}>
                         <button onClick={() => handleChatCreate()}>
-                          {chat.title}
+                          {isSidebarOpen ? "+" : chat.title}
                         </button>
                       </li>
                     ) : (

@@ -3,7 +3,7 @@ import styles from "./MemberTable.module.css";
 
 import MemberTBody from "./MemberTBody";
 
-export default function MemberTable({ memberManagementData }) {
+export default function MemberTable({ memberManagementData, onDataChange }) {
   return (
     <div className={styles.memberTable}>
       <ul className={styles.tableHeader}>
@@ -16,7 +16,12 @@ export default function MemberTable({ memberManagementData }) {
       </ul>
       <div className={styles.tableBody}>
         {memberManagementData.map((member, index) => (
-          <MemberTBody key={member.id || index} member={member} index={index} />
+          <MemberTBody
+            key={member.id || index}
+            member={member}
+            index={index}
+            onDataChange={onDataChange}
+          />
         ))}
       </div>
     </div>

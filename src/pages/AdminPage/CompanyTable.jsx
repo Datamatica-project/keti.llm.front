@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./MemberTable.module.css";
 import CompanyTBody from "./CompanyTBody";
 
-export default function CompanyTable({ companyManagementData }) {
+export default function CompanyTable({ companyManagementData, onDataChange }) {
   return (
     <div className={`${styles.memberTable} ${styles.companyTable}`}>
       <ul className={styles.tableHeader}>
@@ -20,6 +20,7 @@ export default function CompanyTable({ companyManagementData }) {
             key={company?.id || index}
             company={company}
             index={index}
+            onDataChange={onDataChange}
           />
         ))}
       </div>
