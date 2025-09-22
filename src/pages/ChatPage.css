@@ -89,10 +89,15 @@
   box-shadow: none;
 }
 
+.chat-container:not(.empty-chat) .chat-center.expanded-margin {
+  padding-bottom: 60vh;
+}
+
 /* 채팅이 시작된 후의 스타일 */
 .chat-container:not(.empty-chat) .chat-center {
   padding-bottom: 80px; /* 입력폼을 위한 추가 여백 */
   overflow: visible;
+  transition: padding-bottom 0.3s ease;
 }
 
 /* 메시지가 있을 때와 없을 때의 레이아웃 차이 */

@@ -163,13 +163,13 @@ export default function MainPage() {
                 textareaRef={textareaRef}
               />
             </div>
-            <section
+            {/* <section
               className={`chat-section ${handleAnimation ? "fade-in" : ""}`}
             >
               <article></article>
               <article></article>
               <article></article>
-            </section>
+            </section> */}
           </div>
         </div>
       </div>

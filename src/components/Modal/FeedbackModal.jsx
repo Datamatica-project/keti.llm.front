@@ -27,7 +27,7 @@ export default function FeedbackModal() {
       feedbackType: "BAD",
       feedbackComment: feedbackText,
     };
-
+    console.log(feedback);
     const response = await sendFeedback(feedback);
     if (response.success) {
       setIsCustomAlertOpen(true);

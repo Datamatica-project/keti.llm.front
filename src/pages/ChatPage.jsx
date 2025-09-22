@@ -158,13 +158,16 @@ export default function ChatPage() {
 
   // 스크롤 위치 조정
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollTo({
-        top: messagesEndRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messagesEndRef.current]);
+    const timeoutId = setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollTo({
+          top: messagesEndRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 350);
+    return () => clearTimeout(timeoutId);
+  }, [loading, isTyping]);
 
   // 로그인 여부 확인
   const isLoggedIn = !!localStorage.getItem("userEmail");
@@ -238,6 +241,7 @@ export default function ChatPage() {
 
     // 싫어요 버튼을 누른 경우 모달창 표시
     if (type === "BAD") {
+      console.log(messageId);
       setFeedbackMessageIndex(messageId);
       setIsAlertModalOpen(false);
       setIsEditModalOpen(false);
@@ -435,7 +439,11 @@ export default function ChatPage() {
       <div className="chat-bg" ref={messagesEndRef}>
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}
-          <div className="chat-center">
+          <div
+            className={`chat-center ${
+              loading || isTyping ? "expanded-margin" : ""
+            }`}
+          >
             <div className="chat-messages">
               {messages.map((msg, index) => (
                 <div
