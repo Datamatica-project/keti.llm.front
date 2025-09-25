@@ -203,7 +203,7 @@ function Sidebar() {
                     isChatOpen ? styles.open : ""
                   }`}
                 >
-                  {chatList.map((chat, index) =>
+                  {chatList?.map((chat, index) =>
                     chat.id === "new" ? (
                       <li key={index}>
                         <button onClick={() => handleChatCreate()}>
