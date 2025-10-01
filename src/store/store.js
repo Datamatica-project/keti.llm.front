@@ -28,6 +28,14 @@ export const useChatMenuStore = create((set) => ({
   setFeedbackMessageIndex: (index) => set({ feedbackMessageIndex: index }),
   feedbackText: "",
   setFeedbackText: (text) => set({ feedbackText: text }),
+
+  // 피드백 취소를 위한 이전 상태 저장
+  previousFeedbackState: null,
+  setPreviousFeedbackState: (state) => set({ previousFeedbackState: state }),
+
+  // 취소 시그널 (ChatPage에서 감지용)
+  shouldCancelFeedback: false,
+  setShouldCancelFeedback: (value) => set({ shouldCancelFeedback: value }),
 }));
 
 export const useCustomAlertStore = create((set) => ({

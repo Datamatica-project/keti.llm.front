@@ -73,6 +73,7 @@ export const getChatList = async () => {
 export const sendFeedback = async (feedback) => {
   try {
     const response = await axios.post(`/api/v1/chat/feedback`, feedback);
+
     return response.data;
   } catch (error) {
     console.error("Error sending feedback:", error);

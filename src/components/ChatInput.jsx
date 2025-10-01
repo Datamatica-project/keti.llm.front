@@ -17,7 +17,9 @@ export default function ChatInput({
         ref={textareaRef}
         className="chat-input"
         placeholder={
-          isLoggedIn
+          loading
+            ? "대답을 생각중입니다..."
+            : isLoggedIn
             ? "무엇이든 입력하세요"
             : "채팅을 이용하시려면 로그인이 필요합니다."
         }

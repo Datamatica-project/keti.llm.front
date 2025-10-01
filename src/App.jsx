@@ -57,16 +57,16 @@ function App() {
         {/* 라우트 */}
         {/* <Header /> */}
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/find-password" element={<FindPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/request-company" element={<RequestCompanyPage />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<MainPage />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
             <Route path="/mypage" element={<MypagePage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/find-password" element={<FindPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/request-company" element={<RequestCompanyPage />} />
           </Route>
         </Routes>
       </Router>

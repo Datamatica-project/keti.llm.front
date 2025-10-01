@@ -50,10 +50,15 @@ function Sidebar() {
     if (!user) return;
 
     const fetchChatList = async () => {
-      const response = await getChatSession();
-
-      if (response?.success) {
-        setChatList(response.sessions);
+      try {
+        const response = await getChatSession();
+        if (response?.success) {
+          setChatList(response.sessions);
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          console.error("채팅 세션 목록 가져오기 오류:", error);
+        }
       }
     };
     fetchChatList();

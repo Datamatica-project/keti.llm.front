@@ -69,6 +69,7 @@ const CopyIcon = () => (
 export default function ChatPage() {
   // 채팅 메시지 목록
   const [messages, setMessages] = useState([]);
+
   // 타이핑 효과 진행 중 여부
   const [isTyping, setIsTyping] = useState(false);
   // AI 응답 전체 텍스트 (타이핑 효과용)
@@ -112,6 +113,10 @@ export default function ChatPage() {
     setFeedbackText,
     setIsAlertModalOpen,
     setIsEditModalOpen,
+    previousFeedbackState,
+    setPreviousFeedbackState,
+    shouldCancelFeedback,
+    setShouldCancelFeedback,
   } = useChatMenuStore();
 
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
@@ -121,6 +126,7 @@ export default function ChatPage() {
     setLoading(loadingChatIds.has(chatId));
   }, [loadingChatIds, chatId]);
 
+  // 채팅 세션 목록 가져오기
   useEffect(() => {
     setChatId(chatId);
     const fetchChatList = async () => {
@@ -146,6 +152,7 @@ export default function ChatPage() {
     fetchChatData();
   }, [chatId]);
 
+  // 자동 전송 관련 함수
   useEffect(() => {
     if (shouldAutoSend && newinputText) {
       setInputText(newinputText);
@@ -215,6 +222,22 @@ export default function ChatPage() {
     element.style.height = `${Math.min(element.scrollHeight, 120)}px`;
   };
 
+  // 좋아요,싫어요 취소 시 이전 피드백 상태 복구
+  useEffect(() => {
+    if (shouldCancelFeedback && previousFeedbackState) {
+      const newMessages = [...messages];
+      const { index, feedbackType } = previousFeedbackState;
+
+      if (newMessages[index]) {
+        newMessages[index].feedbackType = feedbackType;
+        setMessages(newMessages);
+      }
+      // 플래그 초기화
+      setShouldCancelFeedback(false);
+      setPreviousFeedbackState(null);
+    }
+  }, [shouldCancelFeedback, previousFeedbackState]);
+
   // 메시지 복사 처리
   const handleCopyMessage = (index) => {
     const text = messages[index].content;
@@ -239,9 +262,24 @@ export default function ChatPage() {
   const handleFeedback = async (index, type, messageId) => {
     const newMessages = [...messages];
 
+    if (type === "BAD") {
+      setPreviousFeedbackState({
+        index: index,
+        messageId: messageId,
+        feedbackType: newMessages[index].feedbackType,
+      });
+    }
+
+    if (newMessages[index].feedbackType === type) {
+      newMessages[index].feedbackType = null;
+    } else {
+      // 다른 버튼이 선택된 경우 기존 선택 해제하고 새로운 선택
+      newMessages[index].feedbackType = type;
+    }
+
     // 싫어요 버튼을 누른 경우 모달창 표시
     if (type === "BAD") {
-      console.log(messageId);
+      console.log(newMessages[index].feedbackType);
       setFeedbackMessageIndex(messageId);
       setIsAlertModalOpen(false);
       setIsEditModalOpen(false);
@@ -250,15 +288,6 @@ export default function ChatPage() {
 
       return;
     } else if (type === "GOOD") {
-      // 이미 같은 버튼이 선택된 경우 선택 해제
-      if (newMessages[index].feedback === type) {
-        newMessages[index].feedback = null;
-      }
-      // 다른 버튼이 선택된 경우 기존 선택 해제하고 새로운 선택
-      else {
-        newMessages[index].feedback = type;
-      }
-
       // 좋아요 전송
       const feedback = {
         messageId: messageId,
@@ -266,12 +295,14 @@ export default function ChatPage() {
       };
 
       const response = await sendFeedback(feedback);
-      if (response.success) {
+      if (response.success && newMessages[index].feedbackType === type) {
         setMessages(newMessages);
         setIsCustomAlertOpen(true);
         setAlertTitle("피드백 전송 완료");
         setAlertMessage("피드백이 전송되었습니다.");
         setAlertType("success");
+      } else if (response.success && newMessages[index].feedbackType === null) {
+        setMessages(newMessages);
       }
     }
   };
@@ -465,42 +496,45 @@ export default function ChatPage() {
                   </div>
 
                   {/* 좋아요/싫어요/복사 버튼 (AI 메시지에만 표시) */}
-                  {msg.messageType === "BOT" && !isTyping && (
-                    <div className="message-footer">
-                      <div className="message-actions">
-                        <button
-                          className={`action-button copy ${
-                            copiedMessageIndex === index
-                              ? "copied show-tooltip"
-                              : ""
-                          }`}
-                          onClick={() => handleCopyMessage(index)}
-                          aria-label="복사"
-                        >
-                          <CopyIcon />
-                          <span className="copy-tooltip">복사됨!</span>
-                        </button>
-                        <button
-                          className={`action-button ${
-                            msg.feedback === "GOOD" ? "active" : ""
-                          }`}
-                          onClick={() => handleFeedback(index, "GOOD", msg.id)}
-                          aria-label="좋아요"
-                        >
-                          <ThumbUpIcon />
-                        </button>
-                        <button
-                          className={`action-button dislike ${
-                            msg.feedback === "BAD" ? "active" : ""
-                          }`}
-                          onClick={() => handleFeedback(index, "BAD", msg.id)}
-                          aria-label="싫어요"
-                        >
-                          <ThumbDownIcon />
-                        </button>
+                  {msg.messageType === "BOT" &&
+                    !(isTyping && index === messages.length - 1) && (
+                      <div className="message-footer">
+                        <div className="message-actions">
+                          <button
+                            className={`action-button copy ${
+                              copiedMessageIndex === index
+                                ? "copied show-tooltip"
+                                : ""
+                            }`}
+                            onClick={() => handleCopyMessage(index)}
+                            aria-label="복사"
+                          >
+                            <CopyIcon />
+                            <span className="copy-tooltip">복사됨!</span>
+                          </button>
+                          <button
+                            className={`action-button ${
+                              msg.feedbackType === "GOOD" ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleFeedback(index, "GOOD", msg.id)
+                            }
+                            aria-label="좋아요"
+                          >
+                            <ThumbUpIcon />
+                          </button>
+                          <button
+                            className={`action-button dislike ${
+                              msg.feedbackType === "BAD" ? "active" : ""
+                            }`}
+                            onClick={() => handleFeedback(index, "BAD", msg.id)}
+                            aria-label="싫어요"
+                          >
+                            <ThumbDownIcon />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ))}
               {loading && (

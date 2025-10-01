@@ -12,6 +12,8 @@ export default function FeedbackModal() {
     setFeedbackMessageIndex,
     feedbackText,
     setFeedbackText,
+    setShouldCancelFeedback,
+    setPreviousFeedbackState,
   } = useChatMenuStore();
 
   const handleFeedback = async () => {
@@ -27,7 +29,7 @@ export default function FeedbackModal() {
       feedbackType: "BAD",
       feedbackComment: feedbackText,
     };
-    console.log(feedback);
+
     const response = await sendFeedback(feedback);
     if (response.success) {
       setIsCustomAlertOpen(true);
@@ -35,7 +37,14 @@ export default function FeedbackModal() {
       setAlertMessage("피드백이 전송되었습니다.");
       setAlertType("success");
       setIsFeedbackModalOpen(false);
+      setPreviousFeedbackState(null);
     }
+  };
+
+  const handleCancel = () => {
+    setShouldCancelFeedback(true);
+    setIsFeedbackModalOpen(false);
+    setFeedbackText("");
   };
 
   return (
@@ -64,7 +73,7 @@ export default function FeedbackModal() {
       />
       {/* 버튼 */}
       <div className="alert-modal-content-buttons ">
-        <button onClick={() => setIsFeedbackModalOpen(false)}>취소</button>
+        <button onClick={handleCancel}>취소</button>
         <button className="feedback-button" onClick={handleFeedback}>
           전송
         </button>

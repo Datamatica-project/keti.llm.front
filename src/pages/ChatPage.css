@@ -342,6 +342,9 @@
 .chat-input::placeholder {
   color: #9a9a9a;
 }
+.chat-input:disabled {
+  cursor: not-allowed;
+}
 
 .chat-send {
   padding: 0;
