@@ -1,18 +1,48 @@
 .memberTable {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr 1fr 1fr 1fr;
+  gap: 0;
+  width: 100%;
+}
+
+.memberTable.companyTable {
+  grid-template-columns: 100px 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .tableHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #373737;
-  padding: 10px 20px;
-  text-align: left;
-  border-radius: 10px;
+  display: contents;
+  white-space: nowrap;
 }
 
 .tableHeader li {
-  flex: 1;
+  background-color: #373737;
+  padding: 15px 20px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.tableHeader li:first-child {
+  border-radius: 5px 0 0 0;
+}
+.tableHeader li:last-child {
+  border-radius: 0 5px 0 0;
+}
+
+.tableBody {
+  display: contents;
+}
+
+.tableRow {
+  display: contents;
+  white-space: nowrap;
+}
+
+.tableCell {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #565656;
 }
 
 .tableBodyItem {
@@ -29,4 +59,33 @@
   flex: 1;
   padding: 5px 0;
   box-sizing: border-box;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 15px;
+}
+.button {
+  font-size: 15px;
+  padding: 6px 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+}
+.approveButton:disabled {
+  background-color: #626262;
+  color: #333;
+  cursor: default;
+}
+.rejectButton {
+  background-color: #2f2f2f;
+  border: 2px solid #595959;
+  color: #fff;
+}
+.rejectButton:disabled {
+  background-color: #1d1d1d;
+  border: 2px solid #595959;
+  color: #696969;
+  cursor: default;
 }

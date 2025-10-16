@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { useChatMenuStore } from "../store/store";
+import {
+  useChatListLoadingStore,
+  useChatListNameStore,
+  useChatMenuStore,
+  useSidebarOpenStore,
+} from "../store/store";
 import { createChatSession, getChatSession } from "../api/mainApi";
+import { useChatCreation } from "../hook/useChatCreation";
+import useIsMobile from "../hook/useIsMobile";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -21,23 +28,58 @@ function Sidebar() {
   const [activeMenu, setActiveMenu] = useState("home");
   const [chatList, setChatList] = useState([]);
   const location = useLocation();
+  const { setChatListName } = useChatListNameStore();
+  const { createChat, isCreating, error } = useChatCreation();
+  const { chatListLoading } = useChatListLoadingStore();
+  const { sidebarOpen, setSidebarOpen } = useSidebarOpenStore();
+  const isMobile = useIsMobile(900, setIsChatOpen);
+
+  const chatListName = useMemo(() => {
+    const ChatListName = {};
+    // map은 새로운 배열을 반환하므로 forEach 사용
+    chatList.forEach((chat) => {
+      ChatListName[chat.sessionId] = chat.sessionName;
+    });
+    return ChatListName;
+  }, [chatList]);
+
+  // 모바일에서는 사이드바 열기
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  }, [isMobile]);
+
+  // 채팅 목록 이름 설정
+  useEffect(() => {
+    setChatListName(chatListName);
+  }, [chatListName]);
 
   // 채팅 세션 목록 가져오기
   useEffect(() => {
-    const fetchChatList = async () => {
-      const response = await getChatSession();
+    // 로그인 상태가 아니면 채팅 세션 목록 가져오지 않음
+    if (!user) return;
 
-      if (response?.success) {
-        setChatList(response.sessions);
-      } else {
-        console.error("채팅 세션 목록 가져오기 실패:", response);
+    const fetchChatList = async () => {
+      try {
+        const response = await getChatSession();
+        if (response?.success) {
+          setChatList(response.sessions);
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          console.error("채팅 세션 목록 가져오기 오류:", error);
+        }
       }
     };
     fetchChatList();
-  }, []);
+  }, [chatListLoading]);
 
   // 현재 경로에 따라 활성화된 메뉴 설정
   useEffect(() => {
+    if (isMobile && sidebarOpen) {
+      setSidebarOpen(false);
+    }
     const path = location.pathname;
     if (path === "/") {
       setActiveMenu("home");
@@ -59,64 +101,85 @@ function Sidebar() {
   const handleChatClick = (chatId) => {
     setIsChatOpen(false);
   };
-  // const [chatList, setChatList] = useState([]);
 
   // 채팅 메뉴 열기
-  const handleChatOpen = () => {
+  const handleChatOpen = useCallback(() => {
     setIsChatOpen((prev) => !prev);
-  };
+  }, []);
 
-  const handleChatActive = (chatId) => {
+  // 채팅 메뉴 활성화
+  const handleChatActive = useCallback((chatId) => {
     setIsChatActive(chatId); // 1 or 2
-  };
+  }, []);
 
-  const handleSidebarOpen = () => {
+  // 사이드바 열기
+  const handleSidebarOpen = useCallback(() => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
+  }, [isSidebarOpen]);
 
-  const handleChatCreate = async () => {
-    console.log("채팅 생성");
-    try {
-      const response = await createChatSession();
-      console.log(response);
-      window.location.reload();
-    } catch (error) {
-      console.error("채팅 생성 실패:", error);
-    }
+  // 모바일 사이드바 열기
+  const handleMobileSidebarOpen = useCallback(() => {
+    setSidebarOpen(false);
+  }, [sidebarOpen]);
+
+  // 채팅 생성
+  const handleChatCreate = () => {
+    // 채팅 생성 훅 호출
+    createChat();
   };
 
   return (
     <nav
       className={`${styles.sidebar} ${
         isSidebarOpen ? styles.close : styles.open
-      }`}
+      }
+      ${sidebarOpen ? styles.mobileOpen : styles.mobileClose}
+      `}
     >
       <header className={styles.header}>
         <Link to="/">
           <img src="/white_logo.png" alt="logo" className={styles.logo} />
         </Link>
-        <button
-          className={styles.closeButton}
-          onClick={() => handleSidebarOpen()}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            fill="currentColor"
-            className="bi bi-chevron-double-left"
-            viewBox="0 0 16 16"
+        {!isMobile ? (
+          <button
+            className={styles.closeButton}
+            onClick={() => handleSidebarOpen()}
           >
-            <path
-              fillRule="evenodd"
-              d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-            />
-            <path
-              fillRule="evenodd"
-              d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="currentColor"
+              className="bi bi-chevron-double-left"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+              />
+              <path
+                fillRule="evenodd"
+                d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
+              />
+            </svg>
+          </button>
+        ) : (
+          <button
+            className={styles.mobileCloseButton}
+            onClick={() => handleMobileSidebarOpen()}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="white"
+              className="bi bi-x-lg"
+              viewBox="0 0 16 16"
+            >
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+            </svg>
+          </button>
+        )}
       </header>
       <section className={styles.menuList}>
         <h3 className={styles.title}>메뉴</h3>
@@ -184,11 +247,11 @@ function Sidebar() {
                     isChatOpen ? styles.open : ""
                   }`}
                 >
-                  {chatList.map((chat, index) =>
+                  {chatList?.map((chat, index) =>
                     chat.id === "new" ? (
                       <li key={index}>
                         <button onClick={() => handleChatCreate()}>
-                          {chat.title}
+                          {isSidebarOpen ? "+" : chat.title}
                         </button>
                       </li>
                     ) : (
@@ -208,33 +271,9 @@ function Sidebar() {
                       </li>
                     )
                   )}
-                  {/* <li>
-                    <Link
-                      to="/chat/1"
-                      className={isChatActive === 1 ? styles.active : ""}
-                      onClick={(e) => {
-                        handleChatActive(1);
-                        e.stopPropagation();
-                      }}
-                    >
-                      {isSidebarOpen ? "1" : "채팅 1"}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/chat/2"
-                      className={isChatActive === 2 ? styles.active : ""}
-                      onClick={(e) => {
-                        handleChatActive(2);
-                        e.stopPropagation();
-                      }}
-                    >
-                      {isSidebarOpen ? "2" : "채팅 2"}
-                    </Link>
-                  </li> */}
                 </ul>
               </li>
-              <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
+              {/* <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
                 <Link
                   className={`${styles.chatTitle} ${
                     activeMenu === "mypage" ? styles.active : ""
@@ -249,9 +288,9 @@ function Sidebar() {
                   )}
                   <span>계정 관리</span>
                 </Link>
-              </li>
+              </li> */}
               {/* 관리자 페이지 메뉴 */}
-              {user.roles && user.roles[0] === "ADMIN" && (
+              {/* {user.roles && user.roles[0] === "ADMIN" && (
                 <li className={styles.chatItem}>
                   <Link
                     className={`${styles.chatTitle} ${
@@ -267,13 +306,13 @@ function Sidebar() {
                     <span>관리자 페이지</span>
                   </Link>
                 </li>
-              )}
+              )} */}
             </>
           )}
         </ul>
 
         {/* 관리 메뉴 */}
-        <ul className={styles.subChatList}>
+        {/* <ul className={styles.subChatList}>
           <li className={styles.chatItem}>
             {user ? (
               <button
@@ -308,9 +347,9 @@ function Sidebar() {
               </Link>
             </li>
           ) : null}
-        </ul>
+        </ul> */}
       </section>
-      {user ? (
+      {/* {user ? (
         <section className={styles.userInfo}>
           <h3>{user.fullName}</h3>
           <p>{user.username}</p>
@@ -319,7 +358,7 @@ function Sidebar() {
         <section className={styles.userInfo}>
           <h3>로그인 후 이용해주세요.</h3>
         </section>
-      )}
+      )} */}
     </nav>
   );
 }

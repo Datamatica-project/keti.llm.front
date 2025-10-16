@@ -18,6 +18,7 @@ import Header from "./components/Header";
 import MypagePage from "./pages/MypagePage";
 import Layout from "./pages/Layout";
 import AdminPage from "./pages/AdminPage";
+import FeedbackModal from "./components/Modal/FeedbackModal";
 
 function App() {
   const {
@@ -25,6 +26,8 @@ function App() {
     setIsAlertModalOpen,
     isEditModalOpen,
     setIsEditModalOpen,
+    isFeedbackModalOpen,
+    setIsFeedbackModalOpen,
   } = useChatMenuStore();
   const { isCustomAlertOpen, setIsCustomAlertOpen } = useCustomAlertStore();
   return (
@@ -42,6 +45,11 @@ function App() {
             <EditModal setIsEditModalOpen={setIsEditModalOpen} />
           </Modal>
         )}
+        {isFeedbackModalOpen && (
+          <Modal>
+            <FeedbackModal setIsFeedbackModalOpen={setIsFeedbackModalOpen} />
+          </Modal>
+        )}
         {/* 커스텀 모달 */}
         {isCustomAlertOpen && (
           <CustomAlert setIsCustomAlertOpen={setIsCustomAlertOpen} />
@@ -49,16 +57,16 @@ function App() {
         {/* 라우트 */}
         {/* <Header /> */}
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/find-password" element={<FindPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/request-company" element={<RequestCompanyPage />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<MainPage />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
             <Route path="/mypage" element={<MypagePage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/find-password" element={<FindPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/request-company" element={<RequestCompanyPage />} />
           </Route>
         </Routes>
       </Router>

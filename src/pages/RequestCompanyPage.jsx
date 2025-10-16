@@ -25,7 +25,7 @@ export default function RequestCompanyPage() {
         companyNumber,
         job
       );
-      if (response.status === 200) {
+      if (response.success) {
         setIsCustomAlertOpen(true);
         setAlertTitle("기관/기업명 추가 요청 완료");
         setAlertMessage("기관/기업명 추가 요청이 완료되었습니다.");

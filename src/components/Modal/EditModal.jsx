@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useChatIdStore, useCustomAlertStore } from "../../store/store";
+import {
+  useChatIdStore,
+  useChatListLoadingStore,
+  useCustomAlertStore,
+} from "../../store/store";
 import { updateChatSession } from "../../api/mainApi";
-import { useParams } from "react-router-dom";
 
 export default function EditModal({ setIsEditModalOpen }) {
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
   const [editInput, setEditInput] = useState("");
   const { chatId } = useChatIdStore();
-
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
   const handleEdit = useCallback(async () => {
     if (editInput === "") {
       setIsCustomAlertOpen(true);
@@ -20,8 +23,8 @@ export default function EditModal({ setIsEditModalOpen }) {
 
     try {
       const response = await updateChatSession(chatId, editInput);
-      console.log(response);
-      window.location.reload();
+
+      setChatListLoading(!chatListLoading);
     } catch (error) {
       console.error("채팅 이름 변경 실패:", error);
     }

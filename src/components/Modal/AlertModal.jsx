@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import {
   useChatIdStore,
+  useChatListLoadingStore,
   useChatMenuStore,
   useCustomAlertStore,
 } from "../../store/store";
@@ -12,6 +13,7 @@ export default function AlertModal({ setIsAlertModalOpen }) {
     useCustomAlertStore();
   const navigate = useNavigate();
   const { chatId } = useChatIdStore();
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
 
   // 삭제 버튼 클릭 시
   const handleDelete = async () => {
@@ -28,7 +30,7 @@ export default function AlertModal({ setIsAlertModalOpen }) {
     setAlertTitle("삭제 완료");
     setAlertMessage("채팅창이 삭제되었습니다.");
     navigate("/");
-    window.location.reload();
+    setChatListLoading(!chatListLoading);
   };
 
   useEffect(() => {

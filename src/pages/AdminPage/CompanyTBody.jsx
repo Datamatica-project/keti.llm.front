@@ -1,39 +1,36 @@
 import React from "react";
 import StatusLabel from "../../components/StatusLabel";
 import styles from "./MemberTable.module.css";
-import { approveMember, rejectMember, suspendMember } from "../../api/adminApi";
+import { approveCompany, rejectCompany } from "../../api/adminApi";
 
-export default function MemberTBody({ member, index, onDataChange }) {
+export default function CompanyTBody({ company, index, onDataChange }) {
   const handleApprove = async () => {
-    console.log("승인");
-    const response = await approveMember(member.userId);
+    const response = await approveCompany(company.id);
     console.log(response);
     onDataChange();
   };
 
   const handleSuspend = async () => {
-    console.log("탈퇴");
-    const response = await suspendMember(member.userId);
+    const response = await rejectCompany(company.id);
     console.log(response);
     onDataChange();
   };
   return (
     <div className={styles.tableRow}>
       <div className={styles.tableCell}>{index + 1}</div>
-      <div className={styles.tableCell}>{member.username}</div>
-      <div className={styles.tableCell}>{member.companyName}</div>
-      <div className={styles.tableCell}>{member.updatedAt.split("T")[0]}</div>
+      <div className={styles.tableCell}>{company.companyName}</div>
+      <div className={styles.tableCell}>{company.businessNumber}</div>
+      <div className={styles.tableCell}>{company.companyNumber}</div>
+      <div className={styles.tableCell}>{company.job}</div>
       <div className={styles.tableCell}>
-        <StatusLabel status={member.status} />
+        <StatusLabel status={company.status} />
       </div>
       <div className={styles.tableCell}>
         <div className={styles.buttonContainer}>
           <button
             className={styles.approveButton + " " + styles.button}
             disabled={
-              member.status === "APPROVED" ||
-              member.status === "WAITING" ||
-              member.status === "WITHDRAWN"
+              company.status === "APPROVED" || company.status === "PENDING"
             }
             onClick={handleApprove}
           >
@@ -42,13 +39,13 @@ export default function MemberTBody({ member, index, onDataChange }) {
           <button
             className={styles.rejectButton + " " + styles.button}
             disabled={
-              member.status === "REJECTED" ||
-              member.status === "WAITING" ||
-              member.status === "WITHDRAWN"
+              company.status === "REJECTED" ||
+              company.status === "PENDING" ||
+              company.status === "WITHDRAWAL"
             }
             onClick={handleSuspend}
           >
-            탈퇴
+            거부
           </button>
         </div>
       </div>

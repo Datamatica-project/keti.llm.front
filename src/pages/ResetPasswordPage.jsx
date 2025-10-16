@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCustomAlertStore } from "../store/store";
 import BodyButton from "../components/BodyButton";
@@ -20,19 +20,18 @@ export default function ResetPasswordPage() {
   // 비밀번호 확인 참조 관리
   const confirmPasswordRef = useRef(null);
 
+  // 로그인 상태 체크
+  useEffect(() => {
+    if (localStorage.getItem("user") || localStorage.removeItem("userEmail")) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("userEmail");
+      window.location.reload();
+    }
+  }, []);
+
   // url에서 토큰 가져오기
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
-
-  // 토큰이 없으면 링크 만료 알림 띄우고 로그인 페이지로 이동
-  if (!token) {
-    setIsCustomAlertOpen(true);
-    setAlertTitle("링크 만료");
-    setAlertMessage("링크가 만료되었습니다.");
-    setAlertType("error");
-    navigate("/login");
-    return;
-  }
 
   // 비밀번호 재설정 요청
   const handleSubmit = async (e) => {
@@ -52,7 +51,7 @@ export default function ResetPasswordPage() {
     // 비밀번호 재설정 요청
     try {
       const response = await resetPassword(password, token);
-      if (response.status === 200) {
+      if (response.success) {
         setIsCustomAlertOpen(true);
         setAlertTitle("비밀번호 재설정 완료");
         setAlertMessage("비밀번호가 재설정되었습니다.");

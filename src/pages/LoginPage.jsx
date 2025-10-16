@@ -3,15 +3,16 @@ import { useNavigate } from "react-router-dom";
 import BodyButton from "../components/BodyButton";
 import "./LoginPage.css";
 import { loginUser } from "../api/user.Api";
-import { useCustomAlertStore } from "../store/store";
+import { useChatListLoadingStore, useCustomAlertStore } from "../store/store";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@datamatica.kr");
+  const [password, setPassword] = useState("adminpass123");
   // const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
+  const { setChatListLoading, chatListLoading } = useChatListLoadingStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,9 +20,11 @@ function LoginPage() {
     let response;
     try {
       response = await loginUser(userData);
-      console.log(response);
     } catch (error) {
-      console.error("로그인 에러:", error);
+      setIsCustomAlertOpen(true);
+      setAlertTitle("로그인 실패");
+      setAlertMessage("이메일 또는 비밀번호가 일치하지 않습니다.");
+      setAlertType("error");
     }
     if (response?.success) {
       setIsCustomAlertOpen(true);
@@ -29,23 +32,8 @@ function LoginPage() {
       setAlertMessage(`${response.user.fullName}님 환영합니다.`);
       setAlertType("success");
       navigate("/");
-    } else {
-      setIsCustomAlertOpen(true);
-      setAlertTitle("로그인 실패");
-      setAlertMessage("로그인에 실패했습니다.");
-      setAlertType("error");
+      setChatListLoading(!chatListLoading);
     }
-
-    // 인수인계 코드
-    // const envEmail = process.env.REACT_APP_USER_EMAIL;
-    // const envPassword = process.env.REACT_APP_USER_PASSWORD;
-    // if (email === envEmail && password === envPassword) {
-    //   localStorage.setItem("userEmail", email);
-    //   setError("");
-    //   navigate("/");
-    // } else {
-    //   setError("이메일 또는 비밀번호가 올바르지 않습니다.");
-    // }
   };
 
   return (
@@ -56,7 +44,7 @@ function LoginPage() {
           <input
             className="login-input"
             type="email"
-            placeholder="이메일 *"
+            placeholder="유저 이메일 *"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -64,7 +52,7 @@ function LoginPage() {
           <input
             className="login-input"
             type="password"
-            placeholder="비밀번호 *"
+            placeholder="유저 비밀번호 *"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

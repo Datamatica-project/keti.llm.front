@@ -109,13 +109,21 @@
   border-radius: 12px;
   padding: 25px;
   max-width: 300px;
-  /* max-height: 200px; */
+  max-height: 200px;
   box-sizing: border-box;
+}
+.approvalCard.companyCard {
+  max-height: 250px;
 }
 .userInfo h3 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  line-height: 1.2;
 }
 .userInfo p {
   font-size: 16px;
@@ -165,5 +173,6 @@
 .rejectBtn {
   background-color: #3b3b3b;
   border: 2px solid #575757;
+  cursor: pointer;
   color: #fff;
 }

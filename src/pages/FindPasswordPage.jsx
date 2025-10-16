@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import BodyButton from "../components/BodyButton";
 import { useNavigate } from "react-router-dom";
 import { useCustomAlertStore } from "../store/store";
+import { findPassword } from "../api/user.Api";
 
 export default function FindPasswordPage() {
   const [email, setEmail] = useState("");
@@ -9,9 +10,12 @@ export default function FindPasswordPage() {
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =
     useCustomAlertStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(email);
+    const response = await findPassword(email);
+    console.log(response);
+
     setIsCustomAlertOpen(true);
     setAlertTitle("링크 전송 완료");
     setAlertMessage("이메일로 비밀번호 재설정 링크를 보냈습니다.");
@@ -26,7 +30,7 @@ export default function FindPasswordPage() {
           <input
             className="login-input"
             type="email"
-            placeholder="이메일 *"
+            placeholder="유저 이메일 *"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

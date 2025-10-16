@@ -21,7 +21,23 @@ export const useChatMenuStore = create((set) => ({
   setIsEditModalOpen: (value) => set({ isEditModalOpen: value }),
   isSidebarOpen: false,
   setIsSidebarOpen: (value) => set({ isSidebarOpen: value }),
+
+  isFeedbackModalOpen: false,
+  setIsFeedbackModalOpen: (value) => set({ isFeedbackModalOpen: value }),
+  feedbackMessageIndex: null,
+  setFeedbackMessageIndex: (index) => set({ feedbackMessageIndex: index }),
+  feedbackText: "",
+  setFeedbackText: (text) => set({ feedbackText: text }),
+
+  // 피드백 취소를 위한 이전 상태 저장
+  previousFeedbackState: null,
+  setPreviousFeedbackState: (state) => set({ previousFeedbackState: state }),
+
+  // 취소 시그널 (ChatPage에서 감지용)
+  shouldCancelFeedback: false,
+  setShouldCancelFeedback: (value) => set({ shouldCancelFeedback: value }),
 }));
+
 export const useCustomAlertStore = create((set) => ({
   isCustomAlertOpen: false,
   setIsCustomAlertOpen: (value) => set({ isCustomAlertOpen: value }),
@@ -47,4 +63,19 @@ export const useChatListStore = create((set) => ({
 export const useChatIdStore = create((set) => ({
   chatId: "",
   setChatId: (id) => set({ chatId: id }),
+}));
+
+export const useChatListNameStore = create((set) => ({
+  chatListName: [],
+  setChatListName: (name) => set({ chatListName: name }),
+}));
+
+export const useChatListLoadingStore = create((set) => ({
+  chatListLoading: true,
+  setChatListLoading: (loading) => set({ chatListLoading: loading }),
+}));
+
+export const useSidebarOpenStore = create((set) => ({
+  sidebarOpen: false,
+  setSidebarOpen: (open) => set({ sidebarOpen: open }),
 }));

@@ -33,12 +33,32 @@
     transition-duration: 300ms;
     overflow: hidden;
   }
+
+  @media (max-width: 900px) {
+    position: fixed;
+
+    &.mobileOpen {
+      left: 0;
+    }
+    &.mobileClose {
+      left: -100%;
+    }
+  }
 }
 .sidebar.open {
-  width: 275px;
-  transition: width 300ms ease;
+  width: 250px;
+  min-width: 250px;
+  transition: width 300ms ease, left 0.3s ease;
 }
 
+/* flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px;
+box-sizing: border-box;
+overflow: hidden;
+transition: all 0.3s ease;
+transform: translateX(-100%); */
 .sidebar.close {
   width: 90px;
   transition: width 300ms ease;
@@ -274,8 +294,22 @@
   height: 35px;
   border-radius: 8px;
   transition: background 0.2s;
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
-
+.mobileCloseButton {
+  background: black;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 .closeButton:hover {
   background: rgb(255, 255, 255);
   > svg {

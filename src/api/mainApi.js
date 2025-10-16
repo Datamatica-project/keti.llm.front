@@ -2,7 +2,6 @@ import api from "./index";
 
 export const getChatList = async (sessionId) => {
   const response = await api.get(`/api/v1/chat/messages/${sessionId}`);
-  console.log(response);
   return response.data;
 };
 
@@ -15,6 +14,7 @@ export const getChatSession = async () => {
       response.data.sessions.push({
         id: "new",
         title: "채팅 시작하기 +",
+        sessionId: "-1",
       });
     }
 
