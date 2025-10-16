@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 20px 50px;
   box-sizing: border-box;
   overflow-y: auto;
   /* position: relative; */
@@ -30,7 +30,7 @@
 
 .chat-container {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   /* position: relative; */
@@ -134,6 +134,12 @@
   user-select: none; /* 텍스트 선택 방지 */
 }
 
+.chat-guide-text {
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
 @keyframes gradientFlow {
   0% {
     background-position: 0% 50%;
@@ -167,11 +173,11 @@
 .message {
   display: flex;
   flex-direction: column;
-  max-width: 80%;
+  /*max-width: 80%;*/
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 8px;
-  min-height: 24px; /* 최소 높이 지정으로 레이아웃 안정화 */
+  /*min-height: 24px;  최소 높이 지정으로 레이아웃 안정화 */
 }
 
 .user-message {
@@ -296,7 +302,9 @@
   transform: translateX(-50%);
   width: 100%;
   background-color: #2a2a2a;
-  padding-bottom: 20px;
+  padding: 0 50px;
+
+  box-sizing: border-box;
 }
 
 .chat-form {
@@ -383,21 +391,32 @@
   text-align: left;
 }
 
+@media (max-width: 1280px) {
+  .chat-title {
+    font-size: 2.2rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .chat-form-container {
+    padding: 8px 20px;
+  }
+
   .chat-bg {
     padding: 10px;
-    height: calc(100vh - 50px); /* 모바일에서 헤더 높이 조정 */
     align-items: flex-start; /* 상단 정렬로 변경 */
     padding-top: 20px;
   }
 
   .chat-container {
-    height: calc(100% - 20px);
+    /* height: calc(100% - 20px); */
+    height: 100%;
   }
-
+  /*
   .message {
     max-width: 90%;
   }
+    */
 
   .chat-center {
     padding: 0px 20px;
@@ -408,6 +427,10 @@
     flex-direction: column;
     height: 100%;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .initial-chat {
@@ -422,19 +445,14 @@
     height: 80px;
   }
 
-  .chat-title {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-
   .chat-bottom {
     padding-top: 10px;
     gap: 10px;
   }
 
   .chat-form {
-    margin-bottom: 4px;
-    box-shadow: none !important;
+    /* margin-bottom: 4px; */
+    box-shadow: none;
     align-items: center;
   }
 
@@ -443,8 +461,8 @@
   }
 
   .chat-send {
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
   }
 
   .chat-guide {
@@ -452,11 +470,19 @@
   }
 }
 
+@media (max-width: 580px) {
+  .chat-title {
+    font-size: 1.7rem;
+  }
+}
+
 /* 모바일에서 채팅 입력폼 스타일 추가 */
 @media (max-width: 480px) {
+  .chat-send {
+    right: 5px;
+  }
   .chat-bg {
     padding: 8px;
-    height: calc(100vh - 46px); /* 더 작은 화면에서 헤더 높이 추가 조정 */
     /* 입력폼을 위한 추가 여백 */
     /* padding-bottom: 100px;  */
     overflow-y: auto; /* 모바일에서 스크롤 허용 */
@@ -472,19 +498,13 @@
     display: none; /* 채팅 중일 때 하단 로봇 숨기기 */
   }
 
-  .chat-title {
-    font-size: 1.3rem;
-    margin-bottom: 16px;
-  }
-
   .message {
     padding: 10px 12px;
-    max-width: 80%; /* 메시지 너비 제한 */
   }
 
   .chat-messages {
     margin-bottom: 8px;
-    max-height: calc(70vh - 170px); /* 여유 공간 증가 */
+    /*max-height: calc(70vh - 170px);  여유 공간 증가 */
     padding-bottom: 80px; /* 고정 입력폼을 위한 추가 패딩 */
     overflow-y: auto;
   }
@@ -495,25 +515,21 @@
   }
 
   .chat-form {
-    position: fixed;
+    /* position: fixed;
     bottom: 16px;
     left: 10px;
-    right: 10px;
-    width: auto;
-    background: rgba(3, 39, 75, 0.9);
-    padding: 8px 12px;
+    right: 10px; */
+    width: 100%;
+    background: transparent;
+    /* padding: 8px 12px; */
     border-radius: 24px;
     z-index: 10;
-    box-shadow: none !important;
+    box-shadow: none;
     align-items: center;
   }
 
   .chat-guide {
     display: none; /* 작은 화면에서는 가이드 텍스트 숨기기 */
-  }
-
-  .chat-form-container {
-    margin-bottom: 60px; /* 고정된 입력폼을 위한 여백 증가 */
   }
 
   .chat-bottom {
@@ -804,5 +820,28 @@
   .feedback-submit-button {
     padding: 8px 12px;
     font-size: 0.9rem;
+  }
+}
+
+.sidebar-open-button {
+  display: none;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 1000;
+  svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  @media (max-width: 768px) {
+    display: block;
   }
 }

@@ -29,15 +29,18 @@ export default function FeedbackModal() {
       feedbackType: "BAD",
       feedbackComment: feedbackText,
     };
-
-    const response = await sendFeedback(feedback);
-    if (response.success) {
-      setIsCustomAlertOpen(true);
-      setAlertTitle("피드백 전송 완료");
-      setAlertMessage("피드백이 전송되었습니다.");
-      setAlertType("success");
-      setIsFeedbackModalOpen(false);
-      setPreviousFeedbackState(null);
+    try {
+      const response = await sendFeedback(feedback);
+      if (response.success) {
+        setIsCustomAlertOpen(true);
+        setAlertTitle("피드백 전송 완료");
+        setAlertMessage("피드백이 전송되었습니다.");
+        setAlertType("success");
+        setIsFeedbackModalOpen(false);
+        setPreviousFeedbackState(null);
+      }
+    } catch (err) {
+      console.error("피드백 전송 실패", err);
     }
   };
 

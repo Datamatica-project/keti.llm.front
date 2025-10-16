@@ -174,7 +174,7 @@ export default function ChatPage() {
       }
     }, 350);
     return () => clearTimeout(timeoutId);
-  }, [loading, isTyping]);
+  }, [loading, isTyping, messages]);
 
   // 로그인 여부 확인
   const isLoggedIn = !!localStorage.getItem("userEmail");

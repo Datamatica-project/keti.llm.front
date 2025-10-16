@@ -74,3 +74,8 @@ export const useChatListLoadingStore = create((set) => ({
   chatListLoading: true,
   setChatListLoading: (loading) => set({ chatListLoading: loading }),
 }));
+
+export const useSidebarOpenStore = create((set) => ({
+  sidebarOpen: false,
+  setSidebarOpen: (open) => set({ sidebarOpen: open }),
+}));

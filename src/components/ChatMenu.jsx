@@ -5,8 +5,10 @@ import {
   useChatIdStore,
   useChatListNameStore,
   useChatMenuStore,
+  useSidebarOpenStore,
 } from "../store/store";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import useIsMobile from "../hook/useIsMobile";
 
 export default function ChatMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +17,9 @@ export default function ChatMenu() {
   const { setChatId } = useChatIdStore();
   const { chatListName } = useChatListNameStore();
   const { setIsFeedbackModalOpen } = useChatMenuStore();
+  const location = useLocation();
+  const isChatPage = location.pathname.includes("/chat");
+  const { sidebarOpen, setSidebarOpen } = useSidebarOpenStore();
 
   const {
     isAlertModalOpen,
@@ -53,25 +58,54 @@ export default function ChatMenu() {
     };
   }, [isOpen]);
 
+  const handleSidebarOpen = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+  const isMobile = useIsMobile(900);
+
   return (
     <div className={styles.chatMenuContainer}>
-      <h1>{chatListName[chatId]}</h1>
-      <div className={styles.chatMenuButton} ref={menuRef}>
-        <button onClick={() => setIsOpen(!isOpen)}>
+      {isMobile && (
+        <button
+          className={styles.sidebarOpenButton}
+          onClick={() => handleSidebarOpen()}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
+            width="20"
+            height="20"
             fill="currentColor"
-            className="bi bi-chevron-down"
+            className="bi bi-list"
             viewBox="0 0 16 16"
+            color="white"
           >
             <path
               fillRule="evenodd"
-              d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+              d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
             />
           </svg>
         </button>
+      )}
+      <h1>{chatListName[chatId]}</h1>
+      <div className={styles.chatMenuButton} ref={menuRef}>
+        {isChatPage && (
+          <button onClick={() => setIsOpen(!isOpen)}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-chevron-down"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fillRule="evenodd"
+                d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+              />
+            </svg>
+          </button>
+        )}
+
         <ul
           className={`${styles.chatMenu} ${
             isOpen ? styles.open : styles.close
