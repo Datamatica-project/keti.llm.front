@@ -3,13 +3,18 @@ import "./Modal.css";
 import { useChatMenuStore } from "../store/store";
 
 export default function Modal({ children }) {
-  const { setIsAlertModalOpen, setIsEditModalOpen, setIsFeedbackModalOpen } =
-    useChatMenuStore();
+  const {
+    setIsAlertModalOpen,
+    setIsEditModalOpen,
+    setIsFeedbackModalOpen,
+    setIsExportModalOpen,
+  } = useChatMenuStore();
 
   const handleClose = () => {
     setIsAlertModalOpen(false);
     setIsEditModalOpen(false);
     setIsFeedbackModalOpen(false);
+    setIsExportModalOpen(false);
   };
 
   useEffect(() => {

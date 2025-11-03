@@ -80,3 +80,16 @@ export const sendFeedback = async (feedback) => {
     throw error;
   }
 };
+
+export const deleteFeedback = async (messageId) => {
+  try {
+    const response = await axios.delete(
+      `/api/v1/chat/feedback/message/${messageId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error sending feedback:", error);
+    throw error;
+  }
+};
