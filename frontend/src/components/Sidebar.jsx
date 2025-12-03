@@ -81,6 +81,7 @@ function Sidebar() {
       setSidebarOpen(false);
     }
     const path = location.pathname;
+    console.log(path);
     if (path === "/") {
       setActiveMenu("home");
     } else if (path.startsWith("/chat")) {
@@ -91,6 +92,8 @@ function Sidebar() {
       setActiveMenu("admin");
     } else if (path === "/mypage") {
       setActiveMenu("mypage");
+    } else if (path.includes("/reference")) {
+      setActiveMenu("reference");
     }
   }, [location.pathname]);
 
@@ -200,6 +203,22 @@ function Sidebar() {
                 <img src="/menuIcon/house-fill.svg" alt="home" />
               )}
               <span>홈</span>
+            </Link>
+          </li>
+          <li className={`${styles.chatItem} ${styles.chatItemTitle}`}>
+            <Link
+              className={`${styles.chatTitle} ${
+                activeMenu === "reference" ? styles.active : ""
+              }`}
+              to="/reference"
+              onClick={() => handleChatClick()}
+            >
+              {activeMenu === "reference" ? (
+                <img src="/menuIcon/file-text.svg" alt="reference" />
+              ) : (
+                <img src="/menuIcon/file-text-fill.svg" alt="reference" />
+              )}
+              <span>참고 문헌</span>
             </Link>
           </li>
           {user && (

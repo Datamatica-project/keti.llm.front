@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: llm-react-frontend
+  name: llm-front
   namespace: demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: llm-react-frontend
+      app: llm-front
   template:
     metadata:
       labels:
-        app: llm-react-frontend
+        app: llm-front
     spec:
       imagePullSecrets:
         - name: harbor-pull-secret # Harbor 사용 시 필요 (지금은 placeholder)
       containers:
-        - name: llm-react-frontend
+        - name: llm-front
           image: REPLACE_WITH_HARBOR_IMAGE # ← 나중에 Harbor 주소로 교체
           imagePullPolicy: Always
           ports:

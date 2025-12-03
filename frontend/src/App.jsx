@@ -20,6 +20,7 @@ import Layout from "./pages/Layout";
 import AdminPage from "./pages/AdminPage";
 import FeedbackModal from "./components/Modal/FeedbackModal";
 import ExportModal from "./components/Modal/ExportModal";
+import ReferencePage from "./pages/ReferencePage";
 
 function App() {
   const {
@@ -73,6 +74,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<MainPage />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
+            <Route path="/reference" element={<ReferencePage />} />
             <Route path="/mypage" element={<MypagePage />} />
             <Route path="/admin" element={<AdminPage />} />
           </Route>
