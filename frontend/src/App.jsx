@@ -19,6 +19,7 @@ import MypagePage from "./pages/MypagePage";
 import Layout from "./pages/Layout";
 import AdminPage from "./pages/AdminPage";
 import FeedbackModal from "./components/Modal/FeedbackModal";
+import ExportModal from "./components/Modal/ExportModal";
 
 function App() {
   const {
@@ -28,6 +29,8 @@ function App() {
     setIsEditModalOpen,
     isFeedbackModalOpen,
     setIsFeedbackModalOpen,
+    isExportModalOpen,
+    setIsExportModalOpen,
   } = useChatMenuStore();
   const { isCustomAlertOpen, setIsCustomAlertOpen } = useCustomAlertStore();
   return (
@@ -48,6 +51,11 @@ function App() {
         {isFeedbackModalOpen && (
           <Modal>
             <FeedbackModal setIsFeedbackModalOpen={setIsFeedbackModalOpen} />
+          </Modal>
+        )}
+        {isExportModalOpen && (
+          <Modal>
+            <ExportModal setIsExportModalOpen={setIsExportModalOpen} />
           </Modal>
         )}
         {/* 커스텀 모달 */}

@@ -13,6 +13,8 @@ export const newinputTextStore = create((set) => ({
 }));
 
 export const useChatMenuStore = create((set) => ({
+  isExportModalOpen: false,
+  setIsExportModalOpen: (value) => set({ isExportModalOpen: value }),
   isMenuOpen: false,
   setIsMenuOpen: (value) => set({ isMenuOpen: value }),
   isAlertModalOpen: false,

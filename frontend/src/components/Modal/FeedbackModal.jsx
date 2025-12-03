@@ -45,7 +45,7 @@ export default function FeedbackModal() {
   };
 
   const handleCancel = () => {
-    setShouldCancelFeedback(true);
+    // setShouldCancelFeedback(true);
     setIsFeedbackModalOpen(false);
     setFeedbackText("");
   };

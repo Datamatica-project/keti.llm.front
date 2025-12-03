@@ -1,7 +1,11 @@
 import React, { use, useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import Lottie from "lottie-react";
-import { formatMessagesForAPI, sendFeedback } from "../api/chatApi";
+import {
+  deleteFeedback,
+  formatMessagesForAPI,
+  sendFeedback,
+} from "../api/chatApi";
 import {
   newinputTextStore,
   useChatIdStore,
@@ -144,6 +148,7 @@ export default function ChatPage() {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
+
         setMessages(response.messages);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
@@ -162,6 +167,13 @@ export default function ChatPage() {
       }, 500);
     }
   }, [shouldAutoSend, newinputText]);
+
+  useEffect(() => {
+    // 타이핑이 끝났고, textarea DOM 이 준비된 경우에만 실행
+    if (!isTyping && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isTyping]);
 
   // 스크롤 위치 조정
   useEffect(() => {
@@ -262,28 +274,59 @@ export default function ChatPage() {
   const handleFeedback = async (index, type, messageId) => {
     const newMessages = [...messages];
 
-    if (type === "BAD") {
-      setPreviousFeedbackState({
-        index: index,
-        messageId: messageId,
-        feedbackType: newMessages[index].feedbackType,
-      });
-    }
+    // 싫어요일 경우 이전 피드백 상태 저장
+    // if (type === "BAD") {
+    //   setPreviousFeedbackState({
+    //     index: index,
+    //     messageId: messageId,
+    //     feedbackType: newMessages[index].feedbackType,
+    //   });
+    // }
 
+    // 삭제 로직
     if (newMessages[index].feedbackType === type) {
-      newMessages[index].feedbackType = null;
+      const response = await deleteFeedback(messageId);
+      if (response.success) {
+        setIsCustomAlertOpen(true);
+        setAlertTitle("피드백 삭제 완료");
+        setAlertMessage("피드백이 삭제되었습니다.");
+        setAlertType("warning");
+        const response2 = await getChatList(chatId);
+        setMessages(response2.messages);
+      }
+      return;
     } else {
-      // 다른 버튼이 선택된 경우 기존 선택 해제하고 새로운 선택
+      // 등록 로직
       newMessages[index].feedbackType = type;
     }
 
     // 싫어요 버튼을 누른 경우 모달창 표시
     if (type === "BAD") {
-      console.log(newMessages[index].feedbackType);
-      setFeedbackMessageIndex(messageId);
-      setIsAlertModalOpen(false);
-      setIsEditModalOpen(false);
-      setIsFeedbackModalOpen(true);
+      // 싫어요 전송
+      const feedback = {
+        messageId: messageId,
+        feedbackType: "BAD",
+        feedbackComment: "bad feedback",
+      };
+
+      try {
+        const response = await sendFeedback(feedback);
+
+        if (response.success) {
+          setIsCustomAlertOpen(true);
+          setAlertTitle("피드백 전송 완료");
+          setAlertMessage("피드백이 전송되었습니다.");
+          setAlertType("success");
+        }
+      } catch (err) {
+        console.error("피드백 전송 실패", err);
+      }
+
+      setFeedbackMessageIndex(messageId); // 피드백 메시지 인덱스 설정
+      setIsAlertModalOpen(false); // 알림 모달창 닫기
+      setIsEditModalOpen(false); // 편집 모달창 닫기
+      setIsFeedbackModalOpen(true); // 피드백 모달창 표시
+
       setFeedbackText(""); // 피드백 텍스트 초기화
 
       return;
@@ -334,7 +377,7 @@ export default function ChatPage() {
       setMessages([
         ...updatedMessages,
         {
-          content: response.message.content,
+          content: "",
           messageType: "BOT",
           isTyping: true,
           feedback: null,
@@ -468,6 +511,9 @@ export default function ChatPage() {
     <div className="chat-page">
       <ChatMenu />
       <div className="chat-bg" ref={messagesEndRef}>
+        {messages.length === 0 && (
+          <div className="chat-empty">채팅 내역이 없습니다.</div>
+        )}
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}
           <div
@@ -485,7 +531,16 @@ export default function ChatPage() {
                 >
                   <div className="message-content">
                     <span className="typing-effect">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown>
+                        {msg.content.split("[출처]")[0]}
+                      </ReactMarkdown>
+                      {msg.messageType === "BOT" && (
+                        <span className="source-link">
+                          {msg.content.split("[출처]")[1]
+                            ? msg.content.split("[출처]")[1].replace("- ", "")
+                            : ""}
+                        </span>
+                      )}
                     </span>
                     {msg.messageType === "BOT" &&
                       isTyping &&

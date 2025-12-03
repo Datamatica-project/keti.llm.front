@@ -3,15 +3,11 @@ import axios from "axios";
 
 const api = axios.create({
   // 프록시를 사용하므로 상대 경로 사용
-  baseURL:
-    process.env.REACT_APP_NODE_ENV === "development"
-      ? ""
-      : process.env.REACT_APP_BASE_URL,
+  baseURL: "",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-
   withCredentials: true,
 });
 
@@ -45,11 +41,11 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("user");
-      localStorage.removeItem("useEmail");
+      localStorage.removeItem("userEmail");
 
-      if (!window.location.pathname.includes("/login")) {
-        window.location.href = "/login";
-      }
+      // if (!window.location.pathname.includes("/login")) {
+      //   window.location.href = "/login";
+      // }
     }
     return Promise.reject(error);
   }

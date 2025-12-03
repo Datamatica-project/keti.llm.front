@@ -312,7 +312,7 @@ function Sidebar() {
         </ul>
 
         {/* 관리 메뉴 */}
-        {/* <ul className={styles.subChatList}>
+        <ul className={styles.subChatList}>
           <li className={styles.chatItem}>
             {user ? (
               <button
@@ -347,7 +347,7 @@ function Sidebar() {
               </Link>
             </li>
           ) : null}
-        </ul> */}
+        </ul>
       </section>
       {/* {user ? (
         <section className={styles.userInfo}>
