@@ -148,7 +148,7 @@ export default function ChatPage() {
     const fetchChatData = async () => {
       try {
         const response = await getChatList(chatId);
-        console.log(response);
+
         setMessages(response.messages);
       } catch (error) {
         console.error("채팅 데이터 가져오기 실패:", error);
@@ -167,6 +167,13 @@ export default function ChatPage() {
       }, 500);
     }
   }, [shouldAutoSend, newinputText]);
+
+  useEffect(() => {
+    // 타이핑이 끝났고, textarea DOM 이 준비된 경우에만 실행
+    if (!isTyping && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isTyping]);
 
   // 스크롤 위치 조정
   useEffect(() => {
@@ -280,7 +287,6 @@ export default function ChatPage() {
     if (newMessages[index].feedbackType === type) {
       const response = await deleteFeedback(messageId);
       if (response.success) {
-        console.log(response);
         setIsCustomAlertOpen(true);
         setAlertTitle("피드백 삭제 완료");
         setAlertMessage("피드백이 삭제되었습니다.");
@@ -305,7 +311,7 @@ export default function ChatPage() {
 
       try {
         const response = await sendFeedback(feedback);
-        console.log(response);
+
         if (response.success) {
           setIsCustomAlertOpen(true);
           setAlertTitle("피드백 전송 완료");
@@ -371,7 +377,7 @@ export default function ChatPage() {
       setMessages([
         ...updatedMessages,
         {
-          content: response.message.content,
+          content: "",
           messageType: "BOT",
           isTyping: true,
           feedback: null,
@@ -505,6 +511,9 @@ export default function ChatPage() {
     <div className="chat-page">
       <ChatMenu />
       <div className="chat-bg" ref={messagesEndRef}>
+        {messages.length === 0 && (
+          <div className="chat-empty">채팅 내역이 없습니다.</div>
+        )}
         <div className={`chat-container`}>
           {/* 메시지가 있을 때의 레이아웃 */}
           <div
@@ -522,7 +531,16 @@ export default function ChatPage() {
                 >
                   <div className="message-content">
                     <span className="typing-effect">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown>
+                        {msg.content.split("[출처]")[0]}
+                      </ReactMarkdown>
+                      {msg.messageType === "BOT" && (
+                        <span className="source-link">
+                          {msg.content.split("[출처]")[1]
+                            ? msg.content.split("[출처]")[1].replace("- ", "")
+                            : ""}
+                        </span>
+                      )}
                     </span>
                     {msg.messageType === "BOT" &&
                       isTyping &&

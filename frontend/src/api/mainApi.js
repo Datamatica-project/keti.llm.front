@@ -9,6 +9,7 @@ export const getChatList = async (sessionId) => {
 export const getChatSession = async () => {
   try {
     const response = await api.get(`/api/v1/chat/sessions`);
+
     // 채팅 세션이 없으면 채팅 시작하기 + 버튼 추가
     if (response.data.sessions.length <= 1) {
       response.data.sessions.push({

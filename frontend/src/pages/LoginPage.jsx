@@ -6,8 +6,8 @@ import { loginUser } from "../api/user.Api";
 import { useChatListLoadingStore, useCustomAlertStore } from "../store/store";
 
 function LoginPage() {
-  const [email, setEmail] = useState("admin@datamatica.kr");
-  const [password, setPassword] = useState("adminpass123");
+  const [email, setEmail] = useState("test11@keti.kr");
+  const [password, setPassword] = useState("Test1111");
   // const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setIsCustomAlertOpen, setAlertTitle, setAlertMessage, setAlertType } =

@@ -15,6 +15,23 @@ export default function ExportModal() {
   const { chatId } = useChatIdStore();
   const { chatListName } = useChatListNameStore();
 
+  // CSV 특수문자 처리 함수
+  const escapeCSV = (str) => {
+    if (!str) return "";
+    // 문자열로 변환
+    const strValue = String(str);
+    // 쉼표, 따옴표, 줄바꿈이 있으면 큰따옴표로 감싸기
+    if (
+      strValue.includes(",") ||
+      strValue.includes('"') ||
+      strValue.includes("\n")
+    ) {
+      // 큰따옴표는 두 개로 이스케이프
+      return `"${strValue.replace(/"/g, '""')}"`;
+    }
+    return strValue;
+  };
+
   const handleDownload = async () => {
     try {
       // 현재 채팅 데이터 가져오기
@@ -52,7 +69,7 @@ export default function ExportModal() {
         );
         mimeType = "application/json";
         fileExtension = "json";
-      } else {
+      } else if (fileFormat === "text") {
         // TEXT 형식
         const chatName = chatListName[chatId] || "채팅";
         const exportDate = new Date().toLocaleString("ko-KR");
@@ -67,6 +84,31 @@ export default function ExportModal() {
         data = textData;
         mimeType = "text/plain";
         fileExtension = "txt";
+      } else if (fileFormat === "csv") {
+        // CSV 형식
+        const BOM = "\uFEFF"; // 한글 깨짐 방지
+        const headers = ["메시지 유형", "발신자", "내용", "피드백", "시간"];
+
+        // CSV 데이터 행 생성
+        const rows = messages.map((msg) => {
+          const sender = msg.messageType === "USER" ? "사용자" : "AI";
+          const content = escapeCSV(msg.content);
+          const feedback = escapeCSV(msg.feedbackType || "");
+          const timestamp = escapeCSV(msg.timestamp || "");
+
+          return [
+            escapeCSV(msg.messageType),
+            escapeCSV(sender),
+            content,
+            feedback,
+            timestamp,
+          ].join(",");
+        });
+
+        // CSV 문자열 조합
+        data = BOM + [headers.join(","), ...rows].join("\n");
+        mimeType = "text/csv";
+        fileExtension = "csv";
       }
 
       // Blob 생성 및 다운로드
@@ -130,6 +172,7 @@ export default function ExportModal() {
       >
         <option value="json">JSON</option>
         <option value="text">텍스트</option>
+        <option value="csv">CSV</option>
       </select>
       {/* 버튼 */}
       <div className="alert-modal-content-buttons">
